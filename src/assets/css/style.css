@@ -1353,6 +1353,18 @@ section {
   border-color: #2383c4;
 }
 
+.btn-buy{
+  background: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}
+
+.btn-buy:hover {
+  background: #2383c4;
+  border-color: #2383c4;
+  color: #fff;
+}
+
 /*--------------------------------------------------------------
 # F.A.Q
 --------------------------------------------------------------*/
@@ -1627,4 +1639,12 @@ section {
 
 #footer .footer-links a:hover {
   color: #3498db;
+}
+
+.prices-container{
+  border-bottom: 1px solid #ddd;
+}
+
+.prices-container:last-child{
+  border-bottom: none;
 }
