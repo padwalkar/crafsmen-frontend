@@ -6,6 +6,7 @@ import Footer from "./commonAssets/footer";
 import AboutUs from "../../pages/About";
 import ContactUs from "../../pages/ContactUs";
 import ServiceDetails from "../../pages/serviceDetails";
+import MyBookings from '../../pages/MyBookings';
 
 
 export default function MainLayout() {
@@ -18,6 +19,7 @@ export default function MainLayout() {
                     <Route path="about-us" element={<AboutUs />} />
                     <Route path="contact-us" element={<ContactUs />} />
                     <Route path="service-details/:id" element={<ServiceDetails />} />
+                    <Route path="my-bookings" element={<MyBookings />} />
                     {/* <Route path="dashboard" element={<Dashboard />} /> */}
                     {/* <Route path="service-list" element={<ServicesList />} /> */}
                     {/* <Route path="service-type" element={<ServicesType />} /> */}

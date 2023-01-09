@@ -4,11 +4,6 @@ const API_URL = 'https://crafsmen-backend-server.onrender.com';
 
 module.exports = function (app) {
 
-
-
-
-
-
   app.use(
     '/customerLogin',
     createProxyMiddleware({
@@ -19,7 +14,7 @@ module.exports = function (app) {
       }
     })
   );
-  
+
   app.use(
     '/validateCustomerOtp',
     createProxyMiddleware({
@@ -64,178 +59,60 @@ module.exports = function (app) {
     })
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   app.use(
-    '/dologin',
+    '/uploadFile',
     createProxyMiddleware({
       target: API_URL,
       changeOrigin: true,
       pathRewrite: function (path, req) {
-        return `/api/v1/entrance/login`;
+        return `/api/v1/entrance/upload-image`;
       }
     })
   );
 
   app.use(
-    '/refreshToken',
+    '/updateCustomer',
     createProxyMiddleware({
       target: API_URL,
       changeOrigin: true,
       pathRewrite: function (path, req) {
-        return `/api/v1/entrance/refreshToken`;
+        return `/api/v1/entrance/customer-details`;
       }
     })
   );
 
-  /* ---- Service Type ---- */
-  app.use(
-    '/getServicesTypeList',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/service-type`;
-      }
-    })
-  );
 
   app.use(
-    '/addNewServiceType',
+    '/getCustomerDetails',
     createProxyMiddleware({
       target: API_URL,
       changeOrigin: true,
       pathRewrite: function (path, req) {
-        return `/api/v1/entrance/service-type`;
+        return `/api/v1/entrance/customer-details`;
       }
     })
   );
 
   app.use(
-    '/deleteServiceType',
+    '/createNewBooking',
     createProxyMiddleware({
       target: API_URL,
       changeOrigin: true,
       pathRewrite: function (path, req) {
-        return `/api/v1/entrance/service-type/${req.query.i}`;
+        return `/api/v1/entrance/bookings`;
       }
     })
   );
 
   app.use(
-    '/updateServiceType',
+    '/getCustomerBookings',
     createProxyMiddleware({
       target: API_URL,
       changeOrigin: true,
       pathRewrite: function (path, req) {
-        return `/api/v1/entrance/service-type/${req.query.i}`;
+        return `/api/v1/entrance/customer-bookings`;
       }
     })
   );
-  /* ---- ./Service Type ---- */
-
-  /* ---- Service List ---- */
-
-
-  app.use(
-    '/addNewService',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/services`;
-      }
-    })
-  );
-
-  app.use(
-    '/deleteService',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/services/${req.query.i}`;
-      }
-    })
-  );
-
-  app.use(
-    '/updateService',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/services/${req.query.i}`;
-      }
-    })
-  );
-  /* ---- ./Service List ---- */
-
-  /* ---- Contractor List ---- */
-  app.use(
-    '/getContractorsList',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/contractors`;
-      }
-    })
-  );
-
-  app.use(
-    '/deleteContractor',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/contractors/${req.query.i}`;
-      }
-    })
-  );
-
-  app.use(
-    '/updateContractor',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/contractors/${req.query.i}`;
-      }
-    })
-  );
-
-  app.use(
-    '/addNewContractor',
-    createProxyMiddleware({
-      target: API_URL,
-      changeOrigin: true,
-      pathRewrite: function (path, req) {
-        return `/api/v1/entrance/contractors`;
-      }
-    })
-  );
-  /* ---- ./Contractor List ---- */
 
 };

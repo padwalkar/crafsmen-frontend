@@ -1,83 +1,51 @@
 import React, { useEffect, useState } from "react";
 import crafsmenLogo from '../../../assets/img/crafsmen-logo.png';
 import { NavLink } from "react-router-dom";
-import { Modal } from 'antd';
-import axios from "axios";
 import _ from 'lodash';
+import LoginModal from "../../sharedComponents/loginModal";
+import ProfileSettings from "../../sharedComponents/profileSettings";
+import { isUserLogin, getImagePath } from '../../helper/genHelper';
+import axios from "axios";
 
 export default function Header() {
 
     const [isLoginOpen, setIsLoginOpen] = useState(false);
-    const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState('');
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [isUserLogin, setIsUserLogin] = useState(false);
+    const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
+    const [customerDetails, setCustomerDetails] = useState('');
 
     useEffect(() => {
-        let token = localStorage.getItem("__t");
+        getCustomer();
+    }, []);
 
-        if (token) {
-            setIsUserLogin(true);
-        }
-        else {
-            setIsUserLogin(false);
-        }
-    }, [])
-
-    const openLoginModal = (e) => {
-        e.preventDefault();
-        setIsOtpSent(false);
-        setIsLoginOpen(true);
-        setIsUserLogin(false);
-        setOtp('');
-        setEmail('');
-    }
-
-    const closeLoginModal = () => {
-        setIsLoginOpen(false);
-        setOtp('');
-        setEmail('');
-    }
-
-    const handleLoginClick = () => {
-        if (_.isEmpty(otp)) {
-            console.log("OTP IS REQUIRED")
-        }
-        else {
+    const getCustomer = async () => {
+        if (isUserLogin()) {
             axios
-                .post('/validateCustomerOtp', { "emailOrPhone": email, "otp": parseInt(otp) })
+                .get('/getCustomerDetails', { headers: { 'Authorization': `Bearer ${localStorage.getItem("__t")}` } })
                 .then(op => {
-                    if (op && op.data && op.data.result && op.data.result.token) {
-                        localStorage.setItem("__t", op.data.result.token);
-                        setIsUserLogin(true);
-                        closeLoginModal();
+                    console.log("i am the customer", op)
+                    if (op && op.data && op.data.result) {
+                        setCustomerDetails(op.data.result);
                     }
                 })
                 .catch(e => console.log("Exception:", e))
         }
     }
 
-    const handleGetOTPClick = () => {
-        if (_.isEmpty(email)) {
-            console.log("Email is empty")
-        }
-        else {
-            axios
-                .post('/customerLogin', { "emailOrPhone": email })
-                .then(op => {
-                    if (op && op.data && op.data.message && op.data.message === 'OTP_SENT_SUCCESSFULLY') {
-                        setIsOtpSent(true);
-                    }
-                })
-                .catch(e => console.log("Exception: ", e))
-        }
+    const openLoginModal = (e) => {
+        e.preventDefault();
+        setIsLoginOpen(true);
     }
+
+    const handleProfileSettingsClick = (e) => {
+        e.preventDefault();
+        setIsProfileSettingsOpen(true);
+    }
+
     const handleLogoutClick = (e) => {
+        console.log("I am clicked logged out")
         e.preventDefault();
         localStorage.clear();
-        setIsUserLogin(false);
-        setEmail('');
-        setOtp('');
+        window.location.reload();
     }
 
     return (
@@ -93,14 +61,19 @@ export default function Header() {
                         <li><NavLink className={(navData) => { return (navData.isActive ? 'active nav-link' : 'nav-link ') }} to="/about-us">About Us</NavLink></li>
                         {/* <li><NavLink className={(navData) => { return (navData.isActive ? 'active nav-link' : 'nav-link ') }} to="/services">Services</NavLink></li> */}
                         <li><NavLink className={(navData) => { return (navData.isActive ? 'active nav-link' : 'nav-link ') }} to="/contact-us">Contact Us</NavLink></li>
-                        {!isUserLogin && <li><a className="getstarted scrollto" href="#" onClick={openLoginModal}>Login</a></li>}
-                        {isUserLogin && <li class="dropdown"><a href="#"><span>Welcome Vinayak</span> <i class="bi bi-chevron-down"></i></a>
+                        {!isUserLogin() && <li><a className="getstarted scrollto" href="#" onClick={openLoginModal}>Login</a></li>}
+                        {isUserLogin() && <li class="dropdown">
+                            <a href="#">
+                                <span>
+                                    {customerDetails && customerDetails.userImage ? <img style={{width: 30, height: 30, borderRadius: '50%'}} src={getImagePath(customerDetails.userImage)} /> : 
+                                    <i style={{ fontSize: 22 }} class="fas fa-user-circle text-secondary"></i>
+                                    }
+                                    </span>
+                            </a>
                             <ul>
-                                <li><a href="#">Profile Settings</a></li>
-                                <li><a href="#">My Bookings</a></li>
+                                <li><a onClick={handleProfileSettingsClick} href="#">Profile Settings</a></li>
+                                <li><a href="/my-bookings">My Bookings</a></li>
                                 <li><a onClick={handleLogoutClick} href="#">Logout</a></li>
-                                {/* <li><a href="#">Drop Down 3</a></li>
-                                <li><a href="#">Drop Down 4</a></li> */}
                             </ul>
                         </li>}
                     </ul>
@@ -108,27 +81,20 @@ export default function Header() {
                 </nav>
 
             </div>
-            {isLoginOpen && <Modal title={isOtpSent ? 'Login' : 'Get OTP'} open={isLoginOpen} onOk={isOtpSent ? handleLoginClick : handleGetOTPClick} onCancel={closeLoginModal} okText={'Login'}>
-                <div className="my-4">
-                    {
-                        isOtpSent ?
-                            <>
-                                <p className="mb-1">Enter the otp received on <span className="fw-bolder"><i>"{email}"</i></span></p>
-                                <div className="form-group">
-                                    <input value={otp} onChange={(e) => setOtp(e.target.value)} type="text" name="otp" className="form-control" id="otp" placeholder="OTP" required />
-                                </div>
-                            </>
-                            :
-                            <>
-                                <p>Enter you email address to continue</p>
-                                <div className="form-group">
-                                    <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" name="email" className="form-control" id="email" placeholder="Email address" required />
-                                </div>
-                            </>
-
-                    }
-                </div>
-            </Modal>}
+            {isLoginOpen &&
+                <LoginModal
+                    setIsLoginOpen={setIsLoginOpen}
+                    isLoginOpen={isLoginOpen}
+                />
+            }
+            {isProfileSettingsOpen &&
+                <ProfileSettings
+                    setIsProfileSettingsOpen={setIsProfileSettingsOpen}
+                    isProfileSettingsOpen={isProfileSettingsOpen}
+                    customerDetails={customerDetails}
+                    getCustomer={getCustomer}
+                />
+            }
         </header>
 
     );

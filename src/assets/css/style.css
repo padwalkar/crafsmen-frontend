@@ -147,9 +147,9 @@ h6 {
 
 .navbar a i,
 .navbar a:focus i {
-  font-size: 12px;
+  /* font-size: 12px;
   line-height: 0;
-  margin-left: 5px;
+  margin-left: 5px; */
 }
 
 .navbar a:hover,
@@ -1647,4 +1647,8 @@ section {
 
 .prices-container:last-child{
   border-bottom: none;
+}
+
+.login-modal{
+  width: 350px!important;
 }
