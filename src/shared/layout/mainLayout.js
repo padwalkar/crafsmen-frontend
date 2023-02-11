@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import Header from "./commonAssets/header";
 import Home from "../../pages/Home";
 import Footer from "./commonAssets/footer";
@@ -20,14 +21,20 @@ export default function MainLayout() {
                     <Route path="contact-us" element={<ContactUs />} />
                     <Route path="service-details/:id" element={<ServiceDetails />} />
                     <Route path="my-bookings" element={<MyBookings />} />
-                    {/* <Route path="dashboard" element={<Dashboard />} /> */}
-                    {/* <Route path="service-list" element={<ServicesList />} /> */}
-                    {/* <Route path="service-type" element={<ServicesType />} /> */}
-                    {/* <Route path="contractor-list" element={<Contractor />} /> */}
                 </Route>
-
-
             </Routes>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={true}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={true}
+                draggable={false}
+                pauseOnHover={true}
+                theme="colored"
+            />
             <Footer />
         </>
     );

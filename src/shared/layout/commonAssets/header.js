@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import crafsmenLogo from '../../../assets/img/crafsmen-logo.png';
 import { NavLink } from "react-router-dom";
+import { Avatar, Spin } from 'antd';
 import _ from 'lodash';
+import axios from "axios";
 import LoginModal from "../../sharedComponents/loginModal";
 import ProfileSettings from "../../sharedComponents/profileSettings";
 import { isUserLogin, getImagePath } from '../../helper/genHelper';
-import axios from "axios";
+import craftsmenLogo from '../../../assets/img/craftsmen-logo.png';
 
 export default function Header() {
 
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
     const [customerDetails, setCustomerDetails] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getCustomer();
@@ -19,15 +21,19 @@ export default function Header() {
 
     const getCustomer = async () => {
         if (isUserLogin()) {
+            setLoading(true);
             axios
                 .get('/getCustomerDetails', { headers: { 'Authorization': `Bearer ${localStorage.getItem("__t")}` } })
                 .then(op => {
-                    console.log("i am the customer", op)
+                    setLoading(false);
                     if (op && op.data && op.data.result) {
                         setCustomerDetails(op.data.result);
                     }
                 })
-                .catch(e => console.log("Exception:", e))
+                .catch(e => {
+                    console.log("Exception:", e);
+                    setLoading(false);
+                })
         }
     }
 
@@ -42,7 +48,6 @@ export default function Header() {
     }
 
     const handleLogoutClick = (e) => {
-        console.log("I am clicked logged out")
         e.preventDefault();
         localStorage.clear();
         window.location.reload();
@@ -53,7 +58,7 @@ export default function Header() {
         <header id="header" className="fixed-top d-flex align-items-center">
             <div className="container d-flex align-items-center justify-content-between">
                 <div className="logo">
-                    <NavLink to="/"><img src={crafsmenLogo} alt="Crafsmen Logo" className="img-fluid" /></NavLink>
+                    <NavLink to="/"><img src={craftsmenLogo} alt="Craftsmen Logo" className="img-fluid" /></NavLink>
                 </div>
                 <nav id="navbar" className="navbar">
                     <ul>
@@ -62,16 +67,22 @@ export default function Header() {
                         {/* <li><NavLink className={(navData) => { return (navData.isActive ? 'active nav-link' : 'nav-link ') }} to="/services">Services</NavLink></li> */}
                         <li><NavLink className={(navData) => { return (navData.isActive ? 'active nav-link' : 'nav-link ') }} to="/contact-us">Contact Us</NavLink></li>
                         {!isUserLogin() && <li><a className="getstarted scrollto" href="#" onClick={openLoginModal}>Login</a></li>}
-                        {isUserLogin() && <li class="dropdown">
+                        {isUserLogin() && <li className="dropdown">
                             <a href="#">
-                                <span>
-                                    {customerDetails && customerDetails.userImage ? <img style={{width: 30, height: 30, borderRadius: '50%'}} src={getImagePath(customerDetails.userImage)} /> : 
-                                    <i style={{ fontSize: 22 }} class="fas fa-user-circle text-secondary"></i>
-                                    }
-                                    </span>
+                                {
+                                    loading ? <Spin /> :
+                                        <span>
+                                            {
+                                                customerDetails && customerDetails.userImage ?
+                                                    <Avatar size="large" src={<img src={getImagePath(customerDetails.userImage)} alt={'avatar'} />} />
+                                                    :
+                                                    <Avatar size="large" icon={<i className="fas fa-user-circle text-secondary"></i>} />
+                                            }
+                                        </span>
+                                }
                             </a>
                             <ul>
-                                <li><a onClick={handleProfileSettingsClick} href="#">Profile Settings</a></li>
+                                <li><a className={`dropdown-item ${loading ? 'disabled' : ''}`} onClick={handleProfileSettingsClick} href="#">Profile Settings</a></li>
                                 <li><a href="/my-bookings">My Bookings</a></li>
                                 <li><a onClick={handleLogoutClick} href="#">Logout</a></li>
                             </ul>

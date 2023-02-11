@@ -1,26 +1,35 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { Spin } from 'antd';
+import _ from 'lodash';
+import NoData from "../../shared/sharedComponents/noData";
 
 export default function MyBookings() {
 
     const [myBookings, setMyBookings] = useState([]);
+    const [loadingBookings, setLoadingBookings] = useState(false);
 
     useEffect(() => {
-
+        setLoadingBookings(true);
         axios
-            .get('/getCustomerBookings', { headers: { 'Authorization': `Bearer ${localStorage.getItem("__t")}` } })
+            .get('/getCustomerBookings')
             .then(op => {
                 setMyBookings(op.data.result);
+                // setMyBookings([]);
+                setLoadingBookings(false);
             })
-            .catch(e => console.log("Exception: ", e))
+            .catch(e => {
+                console.log("Exception: ", e);
+                setLoadingBookings(false);
+            })
     }, [])
 
     return (
         <main id="main">
-            <section class="breadcrumbs">
-                <div class="container">
-                    <div class="d-flex justify-content-between align-items-center">
+            <section className="breadcrumbs">
+                <div className="container">
+                    <div className="d-flex justify-content-between align-items-center">
                         <h2>My Bookings</h2>
                         <ol>
                             <li><a href="/">Home</a></li>
@@ -39,7 +48,7 @@ export default function MyBookings() {
 
                     <div className="row content">
                         <div className="col-lg-12" data-aos="fade-up" data-aos-delay="150">
-                            <table class="table">
+                            <table className="table">
                                 <thead>
                                     <tr>
                                         <th scope="col">Booking Id</th>
@@ -53,18 +62,37 @@ export default function MyBookings() {
                                 </thead>
                                 <tbody>
                                     {
-                                        (myBookings) && myBookings.map((el) =>
+                                        loadingBookings ?
                                             <tr>
-                                                <td>{el.bookingId}</td>
-                                                <td>{el.userName}</td>
-                                                <td>{el.contractorName}</td>
-                                                <td>{el.serviceTitle}</td>
-                                                <td>{dayjs(el.bookingDateTimeFrom).format('DD-MM-YYYY HH:MM')}</td>
-                                                <td>{dayjs(el.bookingDateTimeTo).format('DD-MM-YYYY HH:MM')}</td>
-                                                <td>{el.discountPrice}</td>
+                                                <td className="text-center border-0" colSpan={7}>
+                                                    <div className="py-5 bg-light">
+                                                        <Spin />
+                                                        <h5 className="mt-3 fw-normal text-black-50">Loading Data</h5>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        )
+                                            :
+                                            <>
+                                                {
+                                                    _.isEmpty(myBookings) ? 
+                                                    <>
+                                                    <tr><td className="text-center border-0" colSpan={7}><NoData noDataTitle={'No bookings made by you'}/></td></tr>
+                                                    </> : <>{
 
+                                                        (myBookings) && myBookings.map((el) =>
+                                                            <tr>
+                                                                <td>{el.bookingId}</td>
+                                                                <td>{el.userName}</td>
+                                                                <td>{el.contractorName}</td>
+                                                                <td>{el.serviceTitle}</td>
+                                                                <td>{dayjs(el.bookingDateTimeFrom).format('DD-MM-YYYY HH:MM')}</td>
+                                                                <td>{dayjs(el.bookingDateTimeTo).format('DD-MM-YYYY HH:MM')}</td>
+                                                                <td>{el.discountPrice}</td>
+                                                            </tr>
+                                                        )
+                                                    }</>
+                                                }
+                                            </>
                                     }
                                 </tbody>
                             </table>

@@ -5,9 +5,9 @@ import logo from '../../assets/img/crafsmen-logo.png';
 export default function ContactUs() {
     return (
         <main id="main">
-            <section class="breadcrumbs">
-                <div class="container">
-                    <div class="d-flex justify-content-between align-items-center">
+            <section className="breadcrumbs">
+                <div className="container">
+                    <div className="d-flex justify-content-between align-items-center">
                         <h2>Conatct Us</h2>
                         <ol>
                             <li><a href="/">Home</a></li>
@@ -17,7 +17,7 @@ export default function ContactUs() {
                 </div>
             </section>
 
-            {/* <section class="inner-page"> */}
+            {/* <section className="inner-page"> */}
             <section id="contact" className="contact">
                 <div className="container">
 

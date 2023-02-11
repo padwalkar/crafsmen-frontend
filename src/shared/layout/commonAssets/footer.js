@@ -9,7 +9,7 @@ export default function Footer() {
                 <div className="row d-flex align-items-center">
                     <div className="col-lg-6 text-lg-left text-start">
                         <div className="copyright">
-                            &copy; Copyright <strong>Crafsmen</strong>. All Rights Reserved.
+                            &copy; Copyright <strong>Craftsmen</strong>. All Rights Reserved.
                         </div>
                         {/* <div className="credits">
 
